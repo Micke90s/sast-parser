@@ -41,7 +41,13 @@ parser.add_argument('--jsonpath-filter', type=str, required=False,
 parser.add_argument('--no-verify-version', dest='verify_version', action='store_false',
                     help='Disable verification of the report version before attempting to parse it.' )
 parser.set_defaults(verify_version=True)
+parser.add_argument('--format', type=str, required=False, dest='format',
+                    help='Defines the output format html (default) or markdown')
+parser.set_defaults(format='html')
+
 args = parser.parse_args()
+
+format = args.format
 
 if args.jsonpath_filter is not None:
     try:
@@ -79,6 +85,6 @@ frequencies=countSeverities(vulnerabilities)
 
 project_dir = os.path.dirname(__file__)
 env = jinja2.Environment(loader=jinja2.FileSystemLoader(os.path.join(project_dir, 'templates')))
-template = env.get_template('vulnerability_report.html')
+template = env.get_template('vulnerability_report.' + format + '.tmpl')
 rendered = template.render(vulnerabilities=vulnerabilities, frequencies=countSeverities(vulnerabilities))
 print(rendered)
